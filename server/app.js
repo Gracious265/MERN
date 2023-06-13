@@ -55,9 +55,23 @@ app.get("/api/customers", async (req, res) => {
   }
 });
 
-app.post("/api/customers", (req, res) => {
+app.get('/api/customers/:id', async(req, res) => {
+  res.json({
+    requestParams: req.params,
+    requestQuery: req.query
+  })
+});
+
+app.post("/api/customers", async(req, res) => {
   console.log(req.body);
-  res.send(req.body);
+  const customer = new Customer(req.body);
+  try {
+    await customer.save();
+    res.status(201).json({customer});
+  } catch(err) {
+    res.status(400).json({error: err.message});
+  }
+  
 });
 
 const start = async () => {
